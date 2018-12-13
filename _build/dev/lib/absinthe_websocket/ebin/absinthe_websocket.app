@@ -1,0 +1,12 @@
+{application,absinthe_websocket,
+             [{applications,[kernel,stdlib,elixir,logger,poison,websockex]},
+              {description,"Communicate with a Absinthe+Phoenix Endpoint over WebSockets"},
+              {modules,['Elixir.AbsintheWebSocket',
+                        'Elixir.AbsintheWebSocket.QueryServer',
+                        'Elixir.AbsintheWebSocket.Subscriber',
+                        'Elixir.AbsintheWebSocket.SubscriptionServer',
+                        'Elixir.AbsintheWebSocket.Supervisor',
+                        'Elixir.AbsintheWebSocket.WebSocket']},
+              {registered,[]},
+              {vsn,"0.2.0"},
+              {extra_applications,[logger]}]}.
