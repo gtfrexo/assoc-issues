@@ -5,7 +5,7 @@ defmodule DbWeb.Schema do
     #use Pigeon.APNS
     import_types DbWeb.Schema.Types
 
-    enum :category_enums, values: [:error, :warning, :feedback]
+    enum :log_category, values: [:error, :warning, :feedback]
 
     query do
 
@@ -26,7 +26,7 @@ defmodule DbWeb.Schema do
             resolve &Db.Version_Resolver.all/2
         end
 
-        field :all_hosts, list_of(:host) do
+        field :all_hosts, non_null(list_of(non_null(:host))) do
             resolve &Db.Host_Resolver.all/2
         end
 
@@ -54,15 +54,15 @@ defmodule DbWeb.Schema do
             resolve &Db.Pool_Resolver.all/2
         end
 
-        field :all_venues, list_of(:venue) do
+        field :all_venues, non_null(list_of(non_null(:venue))) do
             resolve &Db.Venue_Resolver.all/2
         end
 
-        field :all_logs, list_of(:log) do
+        field :all_logs, non_null(list_of(non_null(:log))) do
             resolve &Db.Log_Resolver.all/2
         end
 
-        field :all_server_flags, list_of(:context_val) do
+        field :all_server_flags, non_null(list_of(non_null(:context_val))) do
             resolve &Db.Server_Flag_Resolver.all/2
         end
 
@@ -197,18 +197,18 @@ defmodule DbWeb.Schema do
         field :description, :string
         field :media_type, :string
         field :url, :string
-        field :venue_id, :id
-        field :venue_media_id, :id
-        field :event_id, :id
-        field :event_media_id, :id
-        field :person_id, :id
-        field :person_media_id, :id
+        field :venue_image_id, :id
+        field :venue_images_id, non_null(list_of(non_null(:id)))
+        field :event_image_id, :id
+        field :event_images_id, non_null(list_of(non_null(:id)))
+        field :person_image_id, :id
+        field :person_images_id, non_null(list_of(non_null(:id)))
     end
 
     input_object :update_message_params do
         field :content, :string
         field :read_at, :datetime
-        field :sent_at, :datetime
+        #field :sent_at, :datetime
         field :from_person_id, :id
         field :to_person_id, :id
     end
@@ -230,14 +230,14 @@ defmodule DbWeb.Schema do
         field :end_time, :datetime
         field :start_time, :datetime
         field :title, :string
-        field :created_by_id, non_null(:id)
-        field :venue_id, non_null(:id)
+        field :created_by_id, :id
+        field :venue_id, :id
         field :is_private, :boolean
         field :deleted_by_id, :id
         field :updated_by_id, :id
         field :location, :id
         field :pic, :id
-        field :pool, non_null(:id)
+        field :pool, :id
         field :host, :id
         #field :images, list_of(non_null(:id))
         #field :venues, list_of(non_null(:id))
@@ -256,6 +256,10 @@ defmodule DbWeb.Schema do
         field :token, :string
         field :current_device, :string
         field :current_n_key, :string
+        #field :interested_pools, list_of(non_null(:id))
+        #field :interested_persons_id, list_of(non_null(:id))
+        #field :viewed_persons_id, list_of(non_null(:id))
+        #field :attending_persons_id, list_of(non_null(:id))
         #field :user_id, :id
     end
 
@@ -263,9 +267,13 @@ defmodule DbWeb.Schema do
         field :eventbrite_id, :string
         field :seatgeek_id, :string
         field :event_id, :integer
-        #field :interested_persons, list_of(non_null(:id))
-        #field :viewed_persons, list_of(non_null(:id))
-        #field :attending_persons, list_of(non_null(:id))
+        field :interested_persons_id, non_null(list_of(non_null(:id)))
+        field :viewed_persons_id, non_null(list_of(non_null(:id)))
+        field :attending_persons_id, non_null(list_of(non_null(:id)))
+    end
+
+    input_object :tack_pool_params do
+        field :interested_persons_id, non_null(list_of(non_null(:id)))
     end
 
     input_object :update_venue_params do
@@ -273,7 +281,7 @@ defmodule DbWeb.Schema do
         field :description, :string
         field :name, :string
         field :name_full, :string
-        field :event_id, :id
+        #field :event_id, :id
         field :location, :id
         field :pic, :id
         #field :events, list_of(non_null(:id))
@@ -282,7 +290,7 @@ defmodule DbWeb.Schema do
     end
 
     input_object :update_log_params do
-        field :category, :category_enums
+        field :category, :log_category
         field :content, :string
         field :context, :string
         field :person_id, :id
@@ -365,12 +373,12 @@ defmodule DbWeb.Schema do
             arg :description, :string
             arg :media_type, :string
             arg :url, non_null(:string)
-            arg :venue_id, :id
-            arg :venue_media_id, :id
-            arg :event_id, :id
-            arg :event_media_id, :id
-            arg :person_id, :id
-            arg :person_media_id, :id
+            arg :venue_image_id, :id
+            arg :venue_images_id, non_null(list_of(non_null(:id)))
+            arg :event_image_id, :id
+            arg :event_images_id, non_null(list_of(non_null(:id)))
+            arg :person_image_id, :id
+            arg :person_images_id, non_null(list_of(non_null(:id)))
 
             resolve &Db.Media_Resolver.create/2
         end
@@ -378,7 +386,7 @@ defmodule DbWeb.Schema do
         field :create_message, type: :message do
             arg :content, non_null(:string)
             arg :read_at, :datetime
-            arg :sent_at, non_null(:datetime)
+            #arg :sent_at, :datetime
             arg :from_person_id, non_null(:id)
             arg :to_person_id, non_null(:id)
 
@@ -406,14 +414,14 @@ defmodule DbWeb.Schema do
             arg :title, non_null(:string)
             arg :title_full, :string
             arg :created_by_id, non_null(:id)
-            arg :venue_id, non_null(:id)
+            arg :venue_id, :id
             arg :is_private, :boolean
             arg :deleted_by_id, :id
             arg :updated_by_id, :id
-            arg :location, :id
-            arg :pic, :id
-            arg :pool, non_null(:id)
-            arg :host, :id
+            #arg :location, :id
+            #arg :pic, :id
+            #arg :pool, :id
+            #arg :host, :id
             #arg :images, list_of(non_null(:id))
             #arg :venues, list_of(non_null(:id))
 
@@ -454,18 +462,18 @@ defmodule DbWeb.Schema do
             arg :description, :string
             arg :name, non_null(:string)
             arg :name_full, :string
-            arg :event_id, :id
+            #arg :event_id, :id
             arg :location, :id
             arg :pic, :id
-            #arg :events, list_of(non_null(:id))
-            #arg :hosts, list_of(:id)
-            #arg :images, list_of(non_null(:id))
+            arg :events, non_null(list_of(non_null(:id)))
+            arg :hosts, non_null(list_of(non_null(:id)))
+            arg :images, non_null(list_of(non_null(:id)))
 
             resolve &Db.Venue_Resolver.create/2
         end
 
         field :create_log, type: :log do
-            arg :category, non_null(:category_enums)
+            arg :category, non_null(:log_category)
             arg :content, non_null(:string)
             arg :context, non_null(:string)
             arg :person_id, :id
@@ -653,9 +661,9 @@ defmodule DbWeb.Schema do
 
         field :tack_pool, type: :pool do
             arg :id, non_null(:id)
-            arg :pool, :update_pool_params
+            arg :pool, :tack_pool_params
 
-            resolve &Db.Pool_Resolver.update/2
+            resolve &Db.Pool_Resolver.tack/2
         end
 
         field :tack_venue, type: :venue do

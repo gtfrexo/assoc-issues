@@ -9,12 +9,12 @@ defmodule Db.Venues.Venue do
     field :description, :string
     field :name, :string
     field :name_full, :string
-    belongs_to :event, Db.Events.Event
+    #belongs_to :event, Db.Events.Event
     has_one :location, Db.Locations.Location
-    has_one :pic, Db.Medias.Media
+    has_one :pic, Db.Medias.Media, foreign_key: :venue_image_id
     has_many :events, Db.Events.Event
     has_many :hosts, Db.Hosts.Host
-    has_many :images, Db.Medias.Media
+    has_many :images, Db.Medias.Media, foreign_key: :venue_images_id
 
     timestamps(inserted_at: :created_at)
   end
@@ -22,7 +22,7 @@ defmodule Db.Venues.Venue do
   @doc false
   def changeset(venue, attrs) do
     venue
-    |> cast(attrs, [:category, :description, :name, :name_full, :event_id])
+    |> cast(attrs, [:category, :description, :name, :name_full])
     #|> validate_required([:category, :description, :name, :name_full])
   end
 end

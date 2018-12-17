@@ -73,6 +73,13 @@ defmodule Db.Pools do
     |> Repo.update()
   end
 
+  def tack_pool(%Pool{} = pool, attrs) do
+    pool
+    |> Pool.changeset(attrs)
+    #|> Repo.preload(:interested_persons)
+    |> Repo.update()
+  end
+
   @doc """
   Deletes a Pool.
 

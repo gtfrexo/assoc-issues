@@ -79,12 +79,12 @@ defmodule DbWeb.Schema.Types do
         field :description, :string#
         field :media_type, :string
         field :url, non_null(:string)#
-        field :event, :event, resolve: dataloader(:db)#
-        field :event_media, :event, resolve: dataloader(:db)#
-        field :venue, :venue, resolve: dataloader(:db)#
-        field :venue_media, :venue, resolve: dataloader(:db)#
-        field :person, :person, resolve: dataloader(:db)#
-        field :person_media, :person, resolve: dataloader(:db)#
+        field :event_image, :event, resolve: dataloader(:db)#
+        field :event_images, non_null(list_of(non_null(:event))), resolve: dataloader(:db)#
+        field :venue_image, :venue, resolve: dataloader(:db)#
+        field :venue_images, non_null(list_of(non_null(:venue))), resolve: dataloader(:db)#
+        field :person_image, :person, resolve: dataloader(:db)#
+        field :person_images, non_null(list_of(non_null(:person))), resolve: dataloader(:db)#
         field :created_at, non_null(:datetime)
         field :updated_at, non_null(:datetime)
 
@@ -98,7 +98,7 @@ defmodule DbWeb.Schema.Types do
         field :read_at, :datetime#
         field :from_person, non_null(:person), resolve: dataloader(:db)#
         field :to_person, non_null(:person), resolve: dataloader(:db)#
-        field :sent_at, non_null(:datetime)###
+        #field :sent_at, non_null(:datetime)###
         field :created_at, non_null(:datetime)
         field :updated_at, non_null(:datetime)
         field :n_key, :string
@@ -141,14 +141,27 @@ defmodule DbWeb.Schema.Types do
         field :title_full, :string#
         field :pool, non_null(:pool), resolve: dataloader(:db)#
         field :host, :host, resolve: dataloader(:db)###
-        field :images, list_of(:media), resolve: dataloader(:db)#
-        field :venues, list_of(:venue), resolve: dataloader(:db)#
-        field :venue, non_null(:venue), resolve: dataloader(:db)###
+        field :images, non_null(list_of(non_null(:media))), resolve: dataloader(:db)#
+        field :venues, non_null(list_of(non_null(:venue))), resolve: dataloader(:db)#
+        field :venue, :venue, resolve: dataloader(:db)###
         field :created_at, non_null(:datetime)
         field :updated_at, non_null(:datetime)
         field :is_private, :boolean
         field :deleted_by, :person, resolve: dataloader(:db)
         field :updated_by, :person, resolve: dataloader(:db)
+
+        field :create_pool, type: :pool do
+            arg :eventbrite_id, :string
+            arg :seatgeek_id, :string
+            arg :event_id, :id
+            #arg :interested_persons, non_null(list_of(non_null(:person))), resolve: dataloader(:db)#
+            #arg :attending_persons, non_null(list_of(non_null(:person))), resolve: dataloader(:db)#
+            #arg :viewed_persons, non_null(list_of(non_null(:person))), resolve: dataloader(:db)#
+            arg :created_at, non_null(:datetime)
+            arg :updated_at, non_null(:datetime)
+            
+            resolve &Db.Pool_Resolver.create/2
+        end
 
     end
 
@@ -170,18 +183,18 @@ defmodule DbWeb.Schema.Types do
         field :token, :string
         field :current_device, :string
         field :current_n_key, :string
-        field :currently_blocking, list_of(:person), resolve: dataloader(:db)###
-        field :blocked_by, list_of(:person), resolve: dataloader(:db)#
-        field :created_events, list_of(:event), resolve: dataloader(:db)#
-        field :sent_messages, list_of(:message), resolve: dataloader(:db)#
-        field :received_messages, list_of(:message), resolve: dataloader(:db)#
-        field :chatting_with, list_of(:person), resolve: dataloader(:db)#
-        field :interested_pools, list_of(:pool), resolve: dataloader(:db)#
-        field :viewed_pools, list_of(:pool), resolve: dataloader(:db)#
-        field :attending_pools, list_of(:pool), resolve: dataloader(:db)#
-        field :images, list_of(:media), resolve: dataloader(:db)#
+        field :currently_blocking, non_null(list_of(non_null(:person))), resolve: dataloader(:db)###
+        field :blocked_by, non_null(list_of(non_null(:person))), resolve: dataloader(:db)#
+        field :created_events, non_null(list_of(non_null(:event))), resolve: dataloader(:db)#
+        field :sent_messages, non_null(list_of(non_null(:message))), resolve: dataloader(:db)#
+        field :received_messages, non_null(list_of(non_null(:message))), resolve: dataloader(:db)#
+        field :chatting_with, non_null(list_of(non_null(:person))), resolve: dataloader(:db)#
+        field :interested_pools, non_null(list_of(non_null(:pool))), resolve: dataloader(:db)#
+        field :viewed_pools, non_null(list_of(non_null(:pool))), resolve: dataloader(:db)#
+        field :attending_pools, non_null(list_of(non_null(:pool))), resolve: dataloader(:db)#
+        field :images, non_null(list_of(non_null(:media))), resolve: dataloader(:db)#
         #field :user, :user, resolve: dataloader(:db)###
-        field :logs, list_of(:log), resolve: dataloader(:db)
+        field :logs, non_null(list_of(non_null(:log))), resolve: dataloader(:db)
         field :created_at, non_null(:datetime)
         field :updated_at, non_null(:datetime)
 
@@ -193,9 +206,9 @@ defmodule DbWeb.Schema.Types do
         field :event, :event, resolve: dataloader(:db)#
         field :seatgeek_id, :string#
         field :eventbrite_id, :string#
-        field :interested_persons, list_of(:person), resolve: dataloader(:db)#
-        field :attending_persons, list_of(:person), resolve: dataloader(:db)#
-        field :viewed_persons, list_of(:person), resolve: dataloader(:db)#
+        field :interested_persons, non_null(list_of(non_null(:person))), resolve: dataloader(:db)#
+        field :attending_persons, non_null(list_of(non_null(:person))), resolve: dataloader(:db)#
+        field :viewed_persons, non_null(list_of(non_null(:person))), resolve: dataloader(:db)#
         field :created_at, non_null(:datetime)
         field :updated_at, non_null(:datetime)
 
@@ -210,10 +223,10 @@ defmodule DbWeb.Schema.Types do
         field :name_full, :string#
         field :location, :location, resolve: dataloader(:db)#
         field :pic, :media, resolve: dataloader(:db)#
-        field :events, list_of(:event), resolve: dataloader(:db)#
-        field :hosts, list_of(:host), resolve: dataloader(:db)###
-        field :images, list_of(:media), resolve: dataloader(:db)#
-        field :event, :event, resolve: dataloader(:db)###
+        field :events, non_null(list_of(non_null(:event))), resolve: dataloader(:db)#
+        field :hosts, non_null(list_of(non_null(:host))), resolve: dataloader(:db)###
+        field :images, non_null(list_of(non_null(:media))), resolve: dataloader(:db)#
+        #field :event, :event, resolve: dataloader(:db)###
         field :created_at, non_null(:datetime)
         field :updated_at, non_null(:datetime)
 
@@ -221,10 +234,11 @@ defmodule DbWeb.Schema.Types do
             arg :eventbrite_id, :string
             arg :seatgeek_id, :string
             arg :event_id, :id
-            arg :interested_persons_id, :id
-            arg :attending_persons_id, :id
-            arg :viewed_persons_id, :id
-            
+            #arg :interested_persons, non_null(list_of(non_null(:person))), resolve: dataloader(:db)#
+            #arg :attending_persons, non_null(list_of(non_null(:person))), resolve: dataloader(:db)#
+            #arg :viewed_persons, non_null(list_of(non_null(:person))), resolve: dataloader(:db)#
+            arg :created_at, non_null(:datetime)
+            arg :updated_at, non_null(:datetime)
             
             resolve &Db.Pool_Resolver.create/2
         end

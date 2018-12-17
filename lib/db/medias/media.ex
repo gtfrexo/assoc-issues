@@ -10,12 +10,12 @@ defmodule Db.Medias.Media do
     field :description, :string
     field :media_type, :string
     field :url, :string
-    belongs_to :venue, Db.Venues.Venue
-    belongs_to :venue_media, Db.Venues.Venue
-    belongs_to :event, Db.Events.Event
-    belongs_to :event_media, Db.Events.Event
-    belongs_to :person, Db.Persons.Person
-    belongs_to :person_media, Db.Persons.Person
+    belongs_to :venue_image, Db.Venues.Venue, foreign_key: :venue_image_id
+    belongs_to :venue_images, Db.Venues.Venue, foreign_key: :venue_images_id
+    belongs_to :event_image, Db.Events.Event, foreign_key: :event_image_id
+    belongs_to :event_images, Db.Events.Event, foreign_key: :event_images_id
+    belongs_to :person_image, Db.Persons.Person, foreign_key: :person_image_id
+    belongs_to :person_images, Db.Persons.Person, foreign_key: :person_images_id
 
     timestamps(inserted_at: :created_at)
   end
@@ -23,7 +23,7 @@ defmodule Db.Medias.Media do
   @doc false
   def changeset(media, attrs) do
     media
-    |> cast(attrs, [:deleted_at, :description, :media_type, :url, :event_id, :event_media_id, :venue_id, :venue_media_id, :person_id, :person_media_id])
+    |> cast(attrs, [:deleted_at, :description, :media_type, :url, :event_image_id, :event_images_id, :venue_image_id, :venue_images_id, :person_image_id, :person_images_id])
     #|> validate_required([:deleted_at, :description, :media_type, :url])
   end
 end

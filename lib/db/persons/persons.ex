@@ -72,6 +72,7 @@ defmodule Db.Persons do
   def update_person(%Person{} = person, attrs) do
     person
     |> Person.changeset(attrs)
+    #|> Repo.preload(:interested_pools)
     |> Repo.update()
   end
 

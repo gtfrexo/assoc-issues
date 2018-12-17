@@ -22,6 +22,11 @@ defmodule Db.Pool_Resolver do
         |> Pools.update_pool(pool_params)
     end
 
+    def tack(%{id: id, pool: pool_params}, _info) do
+        Pools.get_pool!(id)
+        |> Pools.tack_pool(pool_params)
+    end
+
     def delete(%{id: id}, _info) do
         Pools.get_pool!(id)
         |> Pools.delete_pool

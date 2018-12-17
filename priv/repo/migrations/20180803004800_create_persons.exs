@@ -15,9 +15,14 @@ defmodule Db.Repo.Migrations.CreatePersons do
       add :token, :string
       add :current_device, :string
       add :current_n_key, :string
+      add :currently_blocking_id, references(:persons, on_delete: :nothing)
+      add :blocked_by_id, references(:persons, on_delete: :nothing)
+      add :chatting_with_id, references(:persons, on_delete: :nothing)
 
       timestamps(inserted_at: :created_at)
     end
-
+    create index(:persons, [:currently_blocking_id])
+    create index(:persons, [:blocked_by_id])
+    create index(:persons, [:chatting_with_id])
   end
 end
